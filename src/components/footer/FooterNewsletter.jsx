@@ -1,4 +1,4 @@
-```jsx
+
 import React, { useState } from 'react';
 import { useThemeStore } from '../../store/useThemeStore';
 import { Send } from 'lucide-react';
@@ -50,4 +50,3 @@ export const FooterNewsletter = () => {
     </div>
   );
 };
-```

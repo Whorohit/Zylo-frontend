@@ -1,4 +1,4 @@
-```jsx
+
 import React from 'react';
 import { useThemeStore } from '../../store/useThemeStore';
 import { Twitter, Github, Linkedin } from 'lucide-react';
@@ -33,4 +33,3 @@ export const FooterSocials = () => {
     </div>
   );
 };
-```

@@ -1,4 +1,4 @@
-```jsx
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -86,4 +86,3 @@ export const Footer = () => {
     </footer>
   );
 };
-```
