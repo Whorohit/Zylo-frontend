@@ -10,7 +10,7 @@ export const NavLinks = () => {
   const links = [
     { to: '/explore', label: 'Explore', icon: Compass },
     { to: '/create', label: 'Create', icon: PlusCircle },
-    { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
+    // { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   ];
 
   return (

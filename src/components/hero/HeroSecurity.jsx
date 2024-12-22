@@ -28,7 +28,7 @@ export const HeroSecurity = () => {
           return (
             <div 
               key={index}
-              className="flex items-start space-x-4 p-4 rounded-xl transition-colors hover:bg-white/5"
+              className="flex items-start space-x-6 p-4 rounded-xl transition-colors hover:bg-white/5"
             >
               <div className="flex-shrink-0">
                 <div className="p-3 rounded-xl bg-sky-400/10 border border-sky-400/20">

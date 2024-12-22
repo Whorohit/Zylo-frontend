@@ -54,7 +54,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   const buttonClass = `w-full flex items-center justify-center space-x-2 py-3 rounded-xl font-medium transition-all duration-200`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 h-screen w-full z-50 flex items-center justify-center">
       <div className="absolute inset-0 backdrop-blur-sm bg-black/50" onClick={onClose} />
       <div className={`relative w-full max-w-md p-8 rounded-2xl shadow-2xl transform transition-all duration-300 ${
         isDarkMode ? 'bg-gray-900' : 'bg-white'

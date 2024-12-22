@@ -10,13 +10,13 @@ export const HeroSection = () => {
     <div className="relative min-h-[70vh] mb-12 overflow-hidden">
       <HeroBackground />
 
-      <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+      <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-20">
         <div className="flex flex-col justify-center h-full">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-fade-in">
+          <div className="max-w-6xl">
+            <div className="inline-flex items-center space-x-2 px-4 py-0 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-fade-in">
               <Zap className="w-5 h-5 text-sky-400" />
               <span className="text-base sm:text-lg font-medium bg-gradient-to-r from-sky-400 to-blue-400 bg-clip-text text-transparent">
-                Welcome to Zylo NFT Marketplace
+              Welcome to Zylo Digital Assets Marketplace
               </span>
             </div>
             
@@ -24,16 +24,16 @@ export const HeroSection = () => {
               <span className="text-white">Discover & Collect</span>
               <br />
               <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Extraordinary NFTs
+              Extraordinary Digital Assets
               </span>
             </h1>
             
             <p className="text-lg sm:text-xl text-sky-100 mb-8 leading-relaxed max-w-2xl animate-fade-in-up delay-100">
-              Join the future of digital art. Create, sell, and collect unique NFTs on the most innovative and secure marketplace powered by blockchain technology.
+            Join the future of digital ownership. Create, sell, and collect unique digital assets, including NFTs, on the most innovative and secure blockchain-powered marketplace.
             </p>
 
             <HeroActions />
-            <HeroStats />
+            {/* <HeroStats /> */}
             <HeroSecurity />
           </div>
         </div>
