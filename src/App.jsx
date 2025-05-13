@@ -27,10 +27,10 @@ function App() {
   // const setAuth0User = useAuthStore((state) => state.setAuth0User);
 
  
-   
+   const apiUrl = import.meta.env.VITE_API_URL;
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/user/protected", {
+      const response = await fetch(`${apiUrl}/api/user/protected`, {
         method: "GET",
         headers: { 
           "Content-Type": "application/json", 

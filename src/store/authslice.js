@@ -4,7 +4,7 @@ import { updateToast } from './toastslice';
 import { fetchFromAPI } from '../utils/sharing';
 // import { updateToast, updateToast } from "./toastslice";
 
-
+ const apiUrl = import.meta.env.VITE_API_URL;
 // Async thunk for MetaMask login
 export const metaMaskLogin = createAsyncThunk(
   "auth/metaMaskLogin",
@@ -35,7 +35,7 @@ export const metaMaskLogin = createAsyncThunk(
       const signature = await signer.signMessage(message);
 
       // Send wallet address and signature to backend for authentication
-      const response = await fetch("http://localhost:5000/api/user/metamask-login", {
+      const response = await fetch(`${apiUrl}/api/user/metamask-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ walletAddress: activeAddress, signature }),
@@ -68,7 +68,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:5000/api/user/login", {
+      const response = await fetch(`${apiUrl}/api/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -98,7 +98,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ username, email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:5000/api/user/register", {
+      const response = await fetch(`${apiUrl}/api/user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
@@ -149,7 +149,7 @@ export const linkWallet = createAsyncThunk(
 
 
       // 🔥 Send wallet to backend
-      const response = await fetch("http://localhost:5000/api/user/link-wallet", {
+      const response = await fetch(`${apiUrl}/api/user/link-wallet`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export const updateprofile = createAsyncThunk(
   "auth/updateprofile",
   async (body, { getState, dispatch, rejectWithValue }) => {
     try {
-      const data = await fetchFromAPI("http://localhost:5000/api/auth/updateprofile", "POST", body);
+      const data = await fetchFromAPI(`${apiUrl}/api/auth/updateprofile`, "POST", body);
       dispatch(updateToast({ message: "userprofile successfully updated", type: "success" })); // ✅ Custom toast dispatch
       return data.cart;
     } catch (error) {

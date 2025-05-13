@@ -4,6 +4,8 @@ import MarketplaceABI from "../contracts/NFTMarketplace.json";
 import { updateToast } from "./toastslice";
 import { fetchImage, fetchMetadata } from "../utils/utils";
 
+
+ const apiUrl = import.meta.env.VITE_API_URL;
 // Contract address (Sepolia Testnet)
 // const CONTRACT_ADDRESS = "0x3067A66Cc55cFd6c3f7C096eF6EbbC3b3F5feBc4";  // old wth 15 image 
 // const CONTRACT_ADDRESS = "0xc3a4ebE30a23c32b99Fa5F2Ce0676FD67cfeEd6f";  date  8/3/25  contrract
@@ -138,7 +140,7 @@ export const checkLogin = async (getState, dispatch) => {
 
     if (!user.walletAddress) {
       console.log("🔗 Linking wallet...");
-      const response = await fetch("http://localhost:5000/api/user/link-wallet", {
+      const response = await fetch(`${apiUrl}/api/user/link-wallet`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ walletAddress: currentWallet }),

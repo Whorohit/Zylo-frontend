@@ -5,7 +5,7 @@ import { updateToast } from "./toastslice";
 import { checkLogin, getContract } from "./etherslice";
 import { fetchImage, fetchMetadata } from "../utils/utils";
 
-
+ const apiUrl = import.meta.env.VITE_API_URL;
 
 const convertIPFSUrl = (url) => {
   if (url.startsWith("ipfs://")) {
@@ -13,6 +13,7 @@ const convertIPFSUrl = (url) => {
   }
   return url;
 };
+
 
 // 🎯 Thunk to fetch user profile data
 export const fetchUserProfile = createAsyncThunk(
@@ -22,7 +23,7 @@ export const fetchUserProfile = createAsyncThunk(
       const token = localStorage.getItem("token"); // Get token from local storage
       if (!token) throw new Error("No token found");
 
-      const { data } = await axios.get("http://localhost:5000/api/user/profile", {
+      const { data } = await axios.get(`${apiUrl}/api/user/profile`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

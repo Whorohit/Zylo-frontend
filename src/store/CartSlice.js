@@ -4,13 +4,13 @@ import { fetchAssetByIndex } from "../utils/utils";
 import { fetchFromAPI } from "../utils/sharing";
 
 // ✅ Common API fetch helper
-
+ const apiUrl = import.meta.env.VITE_API_URL;
 
 // 🔹 1️⃣ Get Cart
 export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithValue }) => {
     try {
       // Fetch the cart items (assuming cart contains asset IDs)
-      const data = await fetchFromAPI("http://localhost:5000/api/cart/cart");
+      const data = await fetchFromAPI(`${apiUrl}/api/cart/cart`);
       console.log(data);
       
       const cartItems = data.cart || [];
@@ -35,7 +35,7 @@ export const addToCart = createAsyncThunk(
     "cart/addToCart",
     async (productId, { rejectWithValue, dispatch }) => {
       try {
-        const data = await fetchFromAPI("http://localhost:5000/api/cart/addtocart", "POST", { productId });
+        const data = await fetchFromAPI(`${apiUrl}/api/cart/addtocart`, "POST", { productId });
         dispatch(updateToast({ message: "added to cart!", type: "success" })); // ✅ Custom toast dispatch
         return data.cart;
       } catch (error) {
@@ -49,7 +49,7 @@ export const addToCart = createAsyncThunk(
 // 🔹 3️⃣ Remove from Cart
 export const removeFromCart = createAsyncThunk("cart/removeFromCart", async (productId, { rejectWithValue }) => {
     try {
-        const data = await fetchFromAPI("http://localhost:5000/api/cart/removecart", "POST", { productId });
+        const data = await fetchFromAPI(`${apiUrl}/api/cart/removecart`, "POST", { productId });
         return data.cart;
     } catch (error) {
         return rejectWithValue(error.message);
@@ -59,7 +59,7 @@ export const removeFromCart = createAsyncThunk("cart/removeFromCart", async (pro
 // 🔹 4️⃣ Clear Cart
 export const clearCart = createAsyncThunk("cart/clearCart", async (_, { rejectWithValue }) => {
     try {
-        const data = await fetchFromAPI("http://localhost:5000/api/cart/clear", "GET");
+        const data = await fetchFromAPI(`${apiUrl}/api/cart/clear`, "GET");
         return [];
     } catch (error) {
         return rejectWithValue(error.message);
