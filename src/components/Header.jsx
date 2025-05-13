@@ -9,11 +9,12 @@ import { useNFTStore } from '../store/useNFTStore';
 import { AuthModal } from './AuthModal';
 import { CartPopup } from './CartPopup';
 import { SearchResults } from './SearchResults';
+import { useSelector } from 'react-redux';
 
 export const Header = () => {
   const { isDarkMode, toggleDarkMode } = useThemeStore();
   const { totalItems } = useCartStore();
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, iswallet } = useSelector((state)=>state.auth);
   const { nfts } = useNFTStore();
   const { 
     searchQuery, 

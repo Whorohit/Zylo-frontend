@@ -20,7 +20,7 @@ export const DashboardOverview = () => {
         <div className="flex justify-between items-center mb-6">
           <h3 className={`text-xl font-bold ${
             isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>Recent Purchases</h3>
+          }`}></h3>
           <Link
             to="/explore"
             className={`px-4 py-2 rounded-xl font-medium transition-colors ${
@@ -40,25 +40,7 @@ export const DashboardOverview = () => {
       </div>
 
       {/* Recent Listings */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h3 className={`text-xl font-bold ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>Your Listed NFTs</h3>
-          <Link
-            to="/create"
-            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5"
-          >
-            <Plus className="w-4 h-4" />
-            <span>List New</span>
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recentListings.map((nft) => (
-            <NFTCard key={nft.id} {...nft} />
-          ))}
-        </div>
-      </div>
+
     </div>
   );
 };

@@ -10,11 +10,14 @@ export const Dashboard = () => {
   const { activeTab, setActiveTab } = useDashboardStore();
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'purchased', label: 'Purchased NFTs', icon: Wallet },
     { id: 'listed', label: 'Listed NFTs', icon: Tag },
+    { id: 'usersales', label: 'User Sales', icon: BarChart3 },
     { id: 'history', label: 'Transaction History', icon: History },
-    { id: 'activity', label: 'Recent Activity', icon: Activity },
+
+   
+    
+    
   ];
 
   return (

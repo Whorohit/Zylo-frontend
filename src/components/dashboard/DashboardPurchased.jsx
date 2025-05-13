@@ -4,13 +4,22 @@ import { useNFTStore } from '../../store/useNFTStore';
 import { NFTCard } from '../NFTCard';
 import { Link } from 'react-router-dom';
 import { Compass } from 'lucide-react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserPurchases } from '../../store/userprofileslice';
 
 export const DashboardPurchased = () => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  const { nfts } = useNFTStore();
+  const {purchases}=useSelector(state=>state.userProfile)
+ const dispatch=useDispatch();
+  useEffect(() => {
+     dispatch(fetchUserPurchases())
+   
+  }, [dispatch])
+  
 
   // Get all purchased NFTs
-  const purchasedNFTs = nfts.trending;
+  
 
   return (
     <div>
@@ -27,9 +36,9 @@ export const DashboardPurchased = () => {
         </Link>
       </div>
 
-      {purchasedNFTs.length > 0 ? (
+      {purchases.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {purchasedNFTs.map((nft) => (
+          {purchases.map((nft) => (
             <NFTCard key={nft.id} {...nft} />
           ))}
         </div>

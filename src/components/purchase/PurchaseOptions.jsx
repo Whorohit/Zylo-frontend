@@ -1,36 +1,52 @@
-import React, { useState } from 'react';
-import { useThemeStore } from '../../store/useThemeStore';
-import { useCartStore } from '../../store/useCartStore';
-import { Wallet, Clock, Shield, Info } from 'lucide-react';
+import React, { useState } from "react";
+import { useThemeStore } from "../../store/useThemeStore";
+import { useCartStore } from "../../store/useCartStore";
+import { Wallet, Clock, Shield, Info } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/CartSlice";
+// import { addToCart } from "../../store/etherslice";
 
 export const PurchaseOptions = ({ nft, onPurchase }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  const { addToCart } = useCartStore();
+  // const { addToCart } = useCartStore();
   const [quantity, setQuantity] = useState(1);
+  const dispatch=useDispatch()
 
   const handleAddToCart = () => {
-    addToCart({ ...nft, quantity });
+    if (nft) {
+      dispatch(addToCart(nft.id))
+    }
   };
 
   return (
-    <div className={`p-6 rounded-xl ${
-      isDarkMode ? 'bg-gray-800/50' : 'bg-white'
-    } shadow-lg space-y-6`}>
+    <div
+      className={`p-6 rounded-xl ${
+        isDarkMode ? "bg-gray-800/50" : "bg-white"
+      } shadow-lg space-y-6`}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <p className={`text-sm ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          }`}>Current Price</p>
-          <p className={`text-3xl font-bold ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>{nft.price} ETH</p>
+          <p
+            className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+          >
+            Current Price
+          </p>
+          <p
+            className={`text-3xl font-bold ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            {nft?.price || 0} ETH
+          </p>
         </div>
-        <div className={`p-3 rounded-xl ${
-          isDarkMode ? 'bg-gray-700' : 'bg-sky-50'
-        }`}>
-          <Wallet className={`w-6 h-6 ${
-            isDarkMode ? 'text-sky-400' : 'text-sky-500'
-          }`} />
+        <div
+          className={`p-3 rounded-xl ${isDarkMode ? "bg-gray-700" : "bg-sky-50"}`}
+        >
+          <Wallet
+            className={`w-6 h-6 ${
+              isDarkMode ? "text-sky-400" : "text-sky-500"
+            }`}
+          />
         </div>
       </div>
 
@@ -42,64 +58,57 @@ export const PurchaseOptions = ({ nft, onPurchase }) => {
           Add to Cart
         </button>
         <button
-          onClick={onPurchase}
+          onClick={()=>onPurchase(nft)}
           className={`flex-1 py-3 rounded-xl font-medium transition-all duration-200 ${
             isDarkMode
-              ? 'bg-gray-700 text-white hover:bg-gray-600'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? "bg-gray-700 text-white hover:bg-gray-600"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
+         
         >
           Make Offer
         </button>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className={`p-4 rounded-xl ${
-          isDarkMode ? 'bg-gray-800' : 'bg-gray-50'
-        }`}>
+        <div className={`p-4 rounded-xl ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
           <div className="flex items-center space-x-2 mb-2">
-            <Clock className={`w-5 h-5 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`} />
-            <span className={`text-sm ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>Sale ends in</span>
+            <Clock
+              className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+            />
+            <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+              Sale ends in
+            </span>
           </div>
-          <p className={`text-lg font-medium ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>24h 30m 50s</p>
+          <p className={`text-lg font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            24h 30m 50s
+          </p>
         </div>
-        <div className={`p-4 rounded-xl ${
-          isDarkMode ? 'bg-gray-800' : 'bg-gray-50'
-        }`}>
+        <div className={`p-4 rounded-xl ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
           <div className="flex items-center space-x-2 mb-2">
-            <Shield className={`w-5 h-5 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`} />
-            <span className={`text-sm ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>Authenticity</span>
+            <Shield
+              className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+            />
+            <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+              Authenticity
+            </span>
           </div>
-          <p className={`text-lg font-medium ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>Verified</p>
+          <p className={`text-lg font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            Verified
+          </p>
         </div>
       </div>
 
-      <div className={`p-4 rounded-xl ${
-        isDarkMode ? 'bg-gray-800' : 'bg-gray-50'
-      }`}>
+      <div className={`p-4 rounded-xl ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
         <div className="flex items-start space-x-2">
-          <Info className={`w-5 h-5 mt-0.5 ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          }`} />
+          <Info
+            className={`w-5 h-5 mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+          />
           <div>
-            <p className={`text-sm font-medium mb-1 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Purchase Protection</p>
-            <p className={`text-sm ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>
+            <p className={`text-sm font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+              Purchase Protection
+            </p>
+            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
               Get full refund for items that don't arrive or match the description
             </p>
           </div>

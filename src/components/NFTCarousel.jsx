@@ -10,7 +10,8 @@ import 'swiper/css/navigation';
 
 export const NFTCarousel = ({ nfts }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-
+ 
+ 
   return (
     <div className="relative group">
       <Swiper
@@ -37,7 +38,14 @@ export const NFTCarousel = ({ nfts }) => {
       >
         {nfts.map((nft) => (
           <SwiperSlide key={nft.id}>
-            <NFTCard {...nft} onBuy={() => console.log('Buy NFT:', nft.id)} />
+            <NFTCard
+              id={nft.id}
+              name={nft.name}
+              image={nft.image}
+              price={nft.price}
+              seller={nft.seller}
+              onBuy={() => console.log('Buy NFT:', nft.id)}
+            />
           </SwiperSlide>
         ))}
       </Swiper>

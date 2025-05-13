@@ -14,7 +14,7 @@ export const DashboardContent = ({ activeTab }) => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'overview':
+      case 'usersales':
         return <DashboardOverview />;
       case 'purchased':
         return <DashboardPurchased />;

@@ -3,14 +3,17 @@ import { ExternalLink, Heart, Share2 } from 'lucide-react';
 import { useThemeStore } from '../store/useThemeStore';
 import { Link } from 'react-router-dom';
 
-export const NFTCard = ({
+export const 
+NFTCard = ({
   id,
   name,
   image,
   price,
   description,
-  creator,
+  seller,
   onBuy,
+  isedit
+  
 }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
@@ -27,26 +30,7 @@ export const NFTCard = ({
             alt={name}
             className="w-full h-72 object-cover transform transition-transform duration-700 group-hover:scale-110"
           />
-          <div className="absolute top-3 right-3 flex space-x-2">
-            <button className={`p-2 rounded-full shadow-md backdrop-blur-md transition-colors ${
-              isDarkMode 
-                ? 'bg-gray-800/80 hover:bg-gray-700' 
-                : 'bg-white/80 hover:bg-sky-50'
-            }`}>
-              <Heart className={`w-5 h-5 ${
-                isDarkMode ? 'text-gray-300' : 'text-sky-600'
-              }`} />
-            </button>
-            <button className={`p-2 rounded-full shadow-md backdrop-blur-md transition-colors ${
-              isDarkMode 
-                ? 'bg-gray-800/80 hover:bg-gray-700' 
-                : 'bg-white/80 hover:bg-sky-50'
-            }`}>
-              <Share2 className={`w-5 h-5 ${
-                isDarkMode ? 'text-gray-300' : 'text-sky-600'
-              }`} />
-            </button>
-          </div>
+          
         </div>
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
@@ -56,7 +40,7 @@ export const NFTCard = ({
               }`}>{name}</h3>
               <p className={`text-sm ${
                 isDarkMode ? 'text-gray-400' : 'text-sky-600'
-              }`}>by {creator}</p>
+              }`}>by {seller?.slice(0,5)}...</p>
             </div>
             <ExternalLink className={`w-5 h-5 ${
               isDarkMode ? 'text-gray-400' : 'text-sky-500'
@@ -65,7 +49,7 @@ export const NFTCard = ({
           <p className={`text-sm mb-6 line-clamp-2 ${
             isDarkMode ? 'text-gray-300' : 'text-gray-600'
           }`}>{description}</p>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between   flex-col   items-center">
             <div>
               <p className={`text-sm ${
                 isDarkMode ? 'text-gray-400' : 'text-sky-600'
@@ -74,7 +58,7 @@ export const NFTCard = ({
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>{price} ETH</p>
             </div>
-            <button
+           {!isedit&& <button
               onClick={onBuy}
               className={`px-6 py-2.5 rounded-lg text-white font-medium transition-all duration-200 transform hover:-translate-y-0.5 ${
                 isDarkMode 
@@ -83,7 +67,7 @@ export const NFTCard = ({
               } shadow-md hover:shadow-lg`}
             >
               Buy Now
-            </button>
+            </button>}
           </div>
         </div>
       </Link>

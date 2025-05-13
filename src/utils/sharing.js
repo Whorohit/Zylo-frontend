@@ -14,3 +14,25 @@ export const shareContent = async ({ title, text, url }) => {
     return false;
   }
 };
+
+
+
+ export  const fetchFromAPI = async (url, method = "GET", body = null) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token found");
+
+    const options = {
+        method,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        ...(body && { body: JSON.stringify(body) }),
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+  
+    if (!data.success) throw new Error(data.message || "Request failed");
+    return data;
+};

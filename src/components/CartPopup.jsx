@@ -3,20 +3,31 @@ import { useCartStore } from '../store/useCartStore';
 import { useThemeStore } from '../store/useThemeStore';
 import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux'
+import { clearCart, removeFromCart } from '../store/CartSlice';
 
 export const CartPopup = ({ isOpen, onClose }) => {
-  const { items, totalItems, removeFromCart, clearCart } = useCartStore();
+  // const { items, totalItems, removeFromCart, clearCart } = useCartStore();
+  
+   const {items:item}=useSelector((state)=>state.cart)
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const navigate = useNavigate();
-
+ const dispatch=useDispatch();
   if (!isOpen) return null;
 
-  const total = items.reduce((sum, item) => sum + item.price, 0);
+  // const totalItems = item.reduce((sum, item) => sum + item.price, 0);
 
   const handleCheckout = () => {
     onClose();
     navigate('/checkout');
   };
+   const  cleartheCart= ()=>{
+           dispatch(clearCart())
+   }
+
+    const   removeitemfromCart=(item)=>{
+         dispatch(removeFromCart(item))
+    }
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-end">
@@ -32,7 +43,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
               }`} />
               <h2 className={`text-xl font-bold ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>Your Cart ({totalItems})</h2>
+              }`}>Your Cart ({item.length})</h2>
             </div>
             <button
               onClick={onClose}
@@ -46,7 +57,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          {items.length === 0 ? (
+          {item.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center">
               <ShoppingCart className={`w-16 h-16 mb-4 ${
                 isDarkMode ? 'text-gray-700' : 'text-gray-300'
@@ -58,7 +69,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
           ) : (
             <>
               <div className="flex-1 overflow-y-auto space-y-4">
-                {items.map((item) => (
+                {item.map((item) => (
                   <div
                     key={item.id}
                     className={`flex items-center p-4 rounded-xl ${
@@ -79,7 +90,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
                       }`}>{item.price} ETH</p>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeitemfromCart(item.id)}
                       className={`p-2 rounded-full transition-colors ${
                         isDarkMode 
                           ? 'hover:bg-gray-700 text-gray-400' 
@@ -101,7 +112,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
                   }`}>Total</span>
                   <span className={`font-bold ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>{total.toFixed(3)} ETH</span>
+                  }`}>4 ETH</span>
                 </div>
                 <div className="space-y-3">
                   <button
@@ -111,7 +122,7 @@ export const CartPopup = ({ isOpen, onClose }) => {
                     Checkout
                   </button>
                   <button
-                    onClick={clearCart}
+                    onClick={cleartheCart}
                     className={`w-full py-3 rounded-xl font-medium transition-colors ${
                       isDarkMode 
                         ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' 

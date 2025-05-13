@@ -2,16 +2,22 @@ import React from 'react';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { Wallet, ShoppingBag, Tag, Users } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 export const UserStats = () => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  const { userProfile } = useDashboardStore();
+  // const { userProfile } = useDashboardStore();
+  const {balance,listed,ownedNFTs,data:user }=useSelector(state=>state.userProfile)
+
+  const formattedBalance = typeof balance === "bigint" 
+  ? parseFloat(Number(balance).toFixed(2))
+  : parseFloat(balance);
 
   const stats = [
-    { label: 'Total Balance', value: userProfile.stats.balance, icon: Wallet, change: '+2.5%' },
-    { label: 'NFTs Owned', value: userProfile.stats.nftsOwned, icon: ShoppingBag, change: '+3' },
-    { label: 'NFTs Listed', value: userProfile.stats.nftsListed, icon: Tag, change: '+1' },
-    { label: 'Followers', value: userProfile.stats.followers, icon: Users, change: '+125' },
+    { label: 'Total Balance',value: formattedBalance.toFixed(3)+"Eth", icon: Wallet, change: '+2.5%' },
+    { label: 'NFTs Owned', value:  ownedNFTs.length, icon: ShoppingBag, change: '+3' },
+    { label: 'NFTs Listed', value:  listed, icon: Tag, change: '+1' },
+    { label: 'Followers', value: user?.followers?.length, icon: Users, change: '+125' },
   ];
 
   return (

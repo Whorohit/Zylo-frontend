@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { shareContent } from '../utils/sharing';
 
 export const useDashboardStore = create((set, get) => ({
-  activeTab: 'overview',
+  activeTab: 'purchased',
   showListNFT: false,
   userProfile: {
     bio: 'Digital art collector and NFT enthusiast. Passionate about blockchain technology and the future of digital ownership.',
