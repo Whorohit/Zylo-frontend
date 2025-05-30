@@ -134,6 +134,7 @@ export const ListNFTForm = () => {
       setPreview(null);
       setFileType(null);
       uploadedHashes.current.clear();
+      dispatch(fetchAssets());
     } catch (error) {
       console.error("Error uploading or listing NFT:", error);
       dispatch(updateToast({ message: error.message || "Failed to list NFT.", type: "error" }));
