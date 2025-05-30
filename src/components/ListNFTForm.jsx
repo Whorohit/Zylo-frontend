@@ -27,6 +27,7 @@ export const ListNFTForm = () => {
 
   const [preview, setPreview] = useState(null);
   const [fileType, setFileType] = useState(null);
+  const [disaable, setdisaable] = useState(false);
 
   const categories = [
     "DigitalArt",
@@ -37,7 +38,6 @@ export const ListNFTForm = () => {
     "Collectibles",
   ];
 
-  // Fetch assets on mount if empty
   useEffect(() => {
     if (!assets.length) {
       dispatch(fetchAssets());
@@ -57,12 +57,17 @@ export const ListNFTForm = () => {
     });
 
   const handleFileChange = async (e) => {
+    setdisaable(true);
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setdisaable(false);
+      return;
+    }
 
     const fType = file.type.split("/")[0];
     if (!["image"].includes(fType)) {
       dispatch(updateToast({ message: "Only images are allowed", type: "error" }));
+      setdisaable(false);
       return;
     }
 
@@ -71,11 +76,13 @@ export const ListNFTForm = () => {
 
       if (uploadedHashes.current.has(hash)) {
         dispatch(updateToast({ message: "You've already uploaded this file in this session.", type: "error" }));
+        setdisaable(false);
         return;
       }
 
       if (existingHashes.includes(hash)) {
         dispatch(updateToast({ message: "This file has already been listed as an NFT.", type: "error" }));
+        setdisaable(false);
         return;
       }
 
@@ -86,22 +93,30 @@ export const ListNFTForm = () => {
     } catch (err) {
       console.error("File hash error:", err);
       dispatch(updateToast({ message: "Error processing the file. Please try again.", type: "error" }));
+    } finally {
+      setdisaable(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setdisaable(true);
 
     if (!formData.file) {
       dispatch(updateToast({ message: "Please upload a file before submitting", type: "error" }));
+      setdisaable(false);
       return;
     }
+
     if (!formData.name.trim()) {
       dispatch(updateToast({ message: "Please enter a name for your NFT", type: "error" }));
+      setdisaable(false);
       return;
     }
+
     if (!formData.price || isNaN(formData.price) || Number(formData.price) <= 0) {
       dispatch(updateToast({ message: "Please enter a valid price.", type: "error" }));
+      setdisaable(false);
       return;
     }
 
@@ -138,6 +153,8 @@ export const ListNFTForm = () => {
     } catch (error) {
       console.error("Error uploading or listing NFT:", error);
       dispatch(updateToast({ message: error.message || "Failed to list NFT.", type: "error" }));
+    } finally {
+      setdisaable(false);
     }
   };
 
@@ -162,136 +179,149 @@ export const ListNFTForm = () => {
   }
 
   return (
-    <div
-      className={`max-w-2xl mx-auto p-8 rounded-2xl shadow-xl ${
-        isDarkMode ? "bg-gray-800/50" : "bg-white"
-      }`}
-    >
-      <h2
-        className={`text-3xl font-bold mb-6 ${
-          isDarkMode ? "text-white" : "text-gray-900"
+    <div className="relative">
+      {disaable && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="loader border-4 border-t-sky-500 border-gray-300 rounded-full w-14 h-14 animate-spin"></div>
+        </div>
+      )}
+
+      <div
+        className={`max-w-2xl mx-auto p-8 rounded-2xl shadow-xl ${
+          isDarkMode ? "bg-gray-800/50" : "bg-white"
         }`}
       >
-        List Your NFT
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-        {/* Name */}
-        <div>
-          <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-name">
-            NFT Name
-          </label>
-          <input
-            id="nft-name"
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-            className={inputClass}
-            placeholder="Enter NFT name"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-description">
-            Description
-          </label>
-          <textarea
-            id="nft-description"
-            value={formData.description}
-            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-            className={`${inputClass} h-32 resize-none`}
-            placeholder="Describe your NFT"
-            required
-          />
-        </div>
-
-        {/* Price */}
-        <div>
-          <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-price">
-            Price (ETH)
-          </label>
-          <input
-            id="nft-price"
-            type="number"
-            step="0.01"
-            value={formData.price}
-            onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-            className={inputClass}
-            placeholder="Set your price"
-            required
-            min="0.0001"
-          />
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-category">
-            Category
-          </label>
-          <select
-            id="nft-category"
-            value={formData.category}
-            onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-            className={inputClass}
-            required
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* File Upload */}
-        <div>
-          <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
-            Upload File
-          </label>
-          <div className={`border-2 border-dashed rounded-xl p-8 text-center ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
-            {preview ? (
-              <div className="relative">
-                {fileType === "image" && <img src={preview} alt="Preview" className="max-h-64 mx-auto rounded-lg" />}
-                <button
-                  type="button"
-                  onClick={handleRemoveFile}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                  aria-label="Remove file"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <Upload className={`w-12 h-12 mx-auto ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
-                <input type="file" accept="image/*,video/*,audio/*" onChange={handleFileChange} className="hidden" id="nft-file-input" />
-                <label
-                  htmlFor="nft-file-input"
-                  className={`cursor-pointer inline-block px-6 py-3 rounded-xl font-semibold transition ${
-                    isDarkMode ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-sky-400 hover:bg-sky-500 text-white"
-                  }`}
-                >
-                  Choose file
-                </label>
-                <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                  Supported formats: images only
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className={`w-full py-3 rounded-xl font-semibold transition ${
-            isDarkMode ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-sky-400 hover:bg-sky-500 text-white"
+        <h2
+          className={`text-3xl font-bold mb-6 ${
+            isDarkMode ? "text-white" : "text-gray-900"
           }`}
         >
-          List NFT
-        </button>
-      </form>
+          List Your NFT
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {/* Name */}
+          <div>
+            <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-name">
+              NFT Name
+            </label>
+            <input
+              id="nft-name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+              className={inputClass}
+              placeholder="Enter NFT name"
+              required
+              disabled={disaable}
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-description">
+              Description
+            </label>
+            <textarea
+              id="nft-description"
+              value={formData.description}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+              className={`${inputClass} h-32 resize-none`}
+              placeholder="Describe your NFT"
+              required
+              disabled={disaable}
+            />
+          </div>
+
+          {/* Price */}
+          <div>
+            <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-price">
+              Price (ETH)
+            </label>
+            <input
+              id="nft-price"
+              type="number"
+              step="0.01"
+              value={formData.price}
+              onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+              className={inputClass}
+              placeholder="Set your price"
+              required
+              min="0.0001"
+              disabled={disaable}
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`} htmlFor="nft-category">
+              Category
+            </label>
+            <select
+              id="nft-category"
+              value={formData.category}
+              onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+              className={inputClass}
+              required
+              disabled={disaable}
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* File Upload */}
+          <div>
+            <label className={`block mb-2 font-medium ${isDarkMode ? "text-gray-200" : "text-gray-700"}`}>
+              Upload File
+            </label>
+            <div className={`border-2 border-dashed rounded-xl p-8 text-center ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
+              {preview ? (
+                <div className="relative">
+                  {fileType === "image" && <img src={preview} alt="Preview" className="max-h-64 mx-auto rounded-lg" />}
+                  <button
+                    type="button"
+                    onClick={handleRemoveFile}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    aria-label="Remove file"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Upload className={`w-12 h-12 mx-auto ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="nft-file-input" />
+                  <label
+                    htmlFor="nft-file-input"
+                    className={`cursor-pointer inline-block px-6 py-3 rounded-xl font-semibold transition ${
+                      isDarkMode ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-sky-400 hover:bg-sky-500 text-white"
+                    }`}
+                  >
+                    Choose file
+                  </label>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                    Supported formats: images only
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={disaable}
+            className={`w-full py-3 rounded-xl font-semibold transition ${
+              isDarkMode ? "bg-sky-600 hover:bg-sky-700 text-white" : "bg-sky-400 hover:bg-sky-500 text-white"
+            }`}
+          >
+            List NFT
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
