@@ -29,8 +29,6 @@ export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithVa
     }
   });
   
-
-// 🔹 2️⃣ Add to Cart
 export const addToCart = createAsyncThunk(
     "cart/addToCart",
     async (productId, { rejectWithValue, dispatch }) => {

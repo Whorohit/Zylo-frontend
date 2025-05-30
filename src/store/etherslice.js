@@ -2,10 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
 import MarketplaceABI from "../contracts/NFTMarketplace.json";
 import { updateToast } from "./toastslice";
-import { fetchImage, fetchMetadata } from "../utils/utils";
+import { fetchImage, fetchImageHash, fetchMetadata } from "../utils/utils";
 
 
- const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 // Contract address (Sepolia Testnet)
 // const CONTRACT_ADDRESS = "0x3067A66Cc55cFd6c3f7C096eF6EbbC3b3F5feBc4";  // old wth 15 image 
 // const CONTRACT_ADDRESS = "0xc3a4ebE30a23c32b99Fa5F2Ce0676FD67cfeEd6f";  date  8/3/25  contrract
@@ -51,7 +51,7 @@ let contractInstance = null;
 //   }
 // };
 
- export  const getContract = async (needSigner = false) => {
+export const getContract = async (needSigner = false) => {
   try {
     // Use public RPC for fetching
     const rpcProvider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
@@ -76,7 +76,7 @@ let contractInstance = null;
 
 //   try {
 //     const provider = new ethers.BrowserProvider(window.ethereum);
-    
+
 //     // Get currently connected accounts
 //     const accounts = await provider.send("eth_accounts", []);
 
@@ -118,7 +118,7 @@ export const checkLogin = async (getState, dispatch) => {
 
     if (accounts.length === 0) {
       console.log("🔓 No wallet connected — requesting MetaMask login...");
-      
+
       try {
         // ✅ Use `window.ethereum.request` to **ensure it waits for user approval**
         accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -168,7 +168,7 @@ export const fetchAssetByIndex = createAsyncThunk(
   async (assetId, { rejectWithValue }) => {
     try {
       const contract = await getContract(false);
-     
+
       const asset = await contract.assets(assetId);
       if (!asset.isListed) throw new Error(`Asset ${assetId} is not listed.`);
 
@@ -210,7 +210,7 @@ export const fetchAssets = createAsyncThunk(
 
       // 🔥 Create an array of promises for asset fetching
       const assetPromises = Array.from(
-        { length: Math.min(Number(totalAssets), 10) },
+        { length: Math.max(Number(totalAssets), 10) },
         (_, i) => i + 1
       ).map(async (i) => {
         try {
@@ -222,6 +222,7 @@ export const fetchAssets = createAsyncThunk(
           // ✅ Fetch metadata and image separately
           const metadata = await fetchMetadata(tokenURI);
           const image = fetchImage(metadata.file);
+          const imageHash = await fetchImageHash(image);
 
           return {
             id: i.toString(),
@@ -234,6 +235,7 @@ export const fetchAssets = createAsyncThunk(
             name: metadata.name,
             description: metadata.description,
             image,
+            imageHash,
           };
         } catch (error) {
           console.error(`❌ Error fetching asset ${i}:`, error);
@@ -252,6 +254,9 @@ export const fetchAssets = createAsyncThunk(
     }
   }
 );
+
+
+
 
 
 
@@ -294,13 +299,14 @@ export const listAsset = createAsyncThunk(
         throw new Error("No event emitted from the contract.");
       }
 
-      dispatch(updateToast({ message:"listed successfully", type: "error" }));
+      dispatch(updateToast({ message: "listed successfully", type: "success" }));
 
       return {
         id: event.assetId,
         metadataURI,
         price,
         category,
+        success: true,
       };
     } catch (error) {
       console.error("Error listing asset:", error);
@@ -356,6 +362,25 @@ export const purchaseAsset = createAsyncThunk(
 );
 
 
+// In thunk
+export const fetchAssetsByCategory = createAsyncThunk(
+  "marketplace/fetchAssetsByCategory",
+  async ({ category, }, { getState, rejectWithValue }) => {
+    const allAssets = getState().marketplace.assets || [];
+    if (allAssets.length === 0) {
+      return rejectWithValue("All assets not loaded yet");
+    }
+    const filteredAssets = category === -1
+      ? allAssets
+      : allAssets.filter(asset => asset.category == category);
+
+   ;
+    return filteredAssets
+  }
+);
+
+
+
 
 
 
@@ -373,9 +398,11 @@ const marketplaceSlice = createSlice({
   name: "marketplace",
   initialState: {
     assets: [],
-    cart:[],
+    cart: [],
     loading: false,
     error: null,
+    allAssets:[],
+    loadingcategoryAssets:false
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -386,6 +413,7 @@ const marketplaceSlice = createSlice({
       .addCase(fetchAssets.fulfilled, (state, action) => {
         state.loading = false;
         state.assets = action.payload;
+        state.allAssets=action.payload
       })
       .addCase(fetchAssets.rejected, (state, action) => {
         state.loading = false;
@@ -403,7 +431,8 @@ const marketplaceSlice = createSlice({
       })
       .addCase(fetchAssetByIndex.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;}
+        state.error = action.payload;
+      }
       )
       .addCase(purchaseAsset.pending, (state) => {
         state.loading = true;
@@ -413,7 +442,8 @@ const marketplaceSlice = createSlice({
         const assetId = action.payload.assetId;
         const assetIndex = state.assets.findIndex((a) => a.id === assetId);
         if (assetIndex !== -1) {
-          state.assets[assetIndex].isListed = false; // Mark as sold
+          state.assets[assetIndex].isListed = false; 
+          state.allAssets[assetIndex].isListed=false// Mark as sold
         }
       })
       .addCase(purchaseAsset.rejected, (state, action) => {
@@ -444,7 +474,19 @@ const marketplaceSlice = createSlice({
       //   state.loading = false;
       //   state.error = action.payload;
       // })
-      
+      .addCase(fetchAssetsByCategory.pending, (state) => {
+        state.loadingcategoryAssets = true;
+        state.error = null;
+      })
+      .addCase(fetchAssetsByCategory.fulfilled, (state, action) => {
+        state.loadingcategoryAssets = false;
+        state.allAssets = action.payload;
+      })
+      .addCase(fetchAssetsByCategory.rejected, (state, action) => {
+        state.loadingcategoryAssets = false;
+        state.error = action.payload;
+      });
+
   },
 });
 

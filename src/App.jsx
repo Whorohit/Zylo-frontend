@@ -44,7 +44,7 @@ function App() {
         // console.log("✅ User Info:", data.user);
 
         // Dispatch user data to Redux store
-        dispatch(setauthdata({ user: data.user, walletAddress: data.user.walletAddress || "" }));
+        dispatch(setauthdata({ user: data.user, walletAddress: data.user.walletAddress || null }));
       } else {
         console.error("🚨 Failed to fetch user info:", data.message);
 

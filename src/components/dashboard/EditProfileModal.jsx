@@ -1,12 +1,15 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useThemeStore } from "../../store/useThemeStore";
+// import { updateUserProfile } from "../../redux/authSlice"; // ✅ Update path as needed
 import { X, Save, Twitter, Globe, Github } from "lucide-react";
-import { useSelector } from "react-redux";
+import { updateprofile } from "../../store/authslice";
 
-export const EditProfileModal = ({ isOpen, onClose, }) => {
+export const EditProfileModal = ({ isOpen, onClose }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-  const userProfile = useSelector((state) => state.auth.user)
-  console.log(userProfile);
+  const dispatch = useDispatch();
+
+  const userProfile = useSelector((state) => state.auth.user);
 
   const [formData, setFormData] = useState({
     username: userProfile?.username || "",
@@ -21,10 +24,15 @@ export const EditProfileModal = ({ isOpen, onClose, }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: call API here
-    onClose();
+    try {
+      await dispatch(updateprofile(formData)).unwrap();
+      onClose();
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      // You can integrate a toast here (e.g. react-toastify) to notify the user.
+    }
   };
 
   const handleKeywordChange = (e) => {
@@ -33,50 +41,55 @@ export const EditProfileModal = ({ isOpen, onClose, }) => {
   };
 
   const inputClass = `w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-  isDarkMode
-    ? "bg-gray-800 border-gray-700 focus:border-sky-500 text-white disabled:bg-gray-700"
-    : "bg-white border-gray-200 focus:border-sky-500 text-gray-900 disabled:bg-gray-100"
-} focus:outline-none focus:ring-0`;
+    isDarkMode
+      ? "bg-gray-800 border-gray-700 focus:border-sky-500 text-white disabled:bg-gray-700"
+      : "bg-white border-gray-200 focus:border-sky-500 text-gray-900 disabled:bg-gray-100"
+  } focus:outline-none focus:ring-0`;
 
-const labelClass = `block mb-2 text-sm font-medium ${
-  isDarkMode ? "text-gray-200" : "text-gray-700"
-}`;
-
+  const labelClass = `block mb-2 text-sm font-medium ${
+    isDarkMode ? "text-gray-200" : "text-gray-700"
+  }`;
 
   return (
-    <div className="fixed     inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
-        className={`relative w-full max-w-lg p-6   rounded-2xl shadow-2xl ${isDarkMode ? "bg-gray-900" : "bg-white"
-          }`}
+        className={`relative w-full max-w-lg p-6 rounded-2xl shadow-2xl ${
+          isDarkMode ? "bg-gray-900" : "bg-white"
+        }`}
       >
         <button
           onClick={onClose}
-          className={`absolute right-4 top-4 p-2 rounded-full transition-colors ${isDarkMode
+          className={`absolute right-4 top-4 p-2 rounded-full transition-colors ${
+            isDarkMode
               ? "hover:bg-gray-800 text-gray-400"
               : "hover:bg-gray-100 text-gray-500"
-            }`}
+          }`}
         >
           <X className="w-5 h-5" />
         </button>
 
         <h2
-          className={`text-2xl font-bold mb-6 ${isDarkMode ? "text-white" : "text-gray-900"
-            }`}
+          className={`text-2xl font-bold mb-6 ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
         >
           Edit Profile
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6   max-h-[30rem]  overflow-x-auto  ">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 max-h-[30rem] overflow-x-auto"
+        >
           {[
             { key: "username", label: "Username" },
             { key: "email", label: "Email", type: "email" },
-            { key: "walletAddress", label: "Wallet Address" ,disable:true},
+            { key: "walletAddress", label: "Wallet Address", disable: true },
             { key: "profile", label: "Bio", isTextarea: true },
-          ].map(({ key, label, type = "text", isTextarea = false,disable=false }) => (
+          ].map(({ key, label, type = "text", isTextarea = false, disable = false }) => (
             <div key={key}>
               <label className={labelClass}>{label}</label>
               {isTextarea ? (
@@ -112,8 +125,9 @@ const labelClass = `block mb-2 text-sm font-medium ${
               ].map(({ key, icon: Icon, label }) => (
                 <div key={key} className="relative">
                   <Icon
-                    className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
                   />
                   <input
                     type="url"

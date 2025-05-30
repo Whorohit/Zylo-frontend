@@ -43,7 +43,7 @@ export const SearchResults = ({ results, isSearching, searchQuery, onClose }) =>
                   }`}>{nft.name}</h4>
                   <p className={`text-sm truncate ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>by {nft.creator}</p>
+                  }`}>by {nft.seller}</p>
                 </div>
                 <p className={`text-sm font-medium ${
                   isDarkMode ? 'text-sky-400' : 'text-sky-600'

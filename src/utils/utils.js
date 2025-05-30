@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { getContract } from "../store/etherslice";
-
+import SparkMD5 from "spark-md5";
 const IPFS_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
 export const fetchMetadata = async (tokenURI) => {
@@ -59,4 +59,16 @@ export const fetchMetadata = async (tokenURI) => {
       throw error; // Throw error instead of using `rejectWithValue`
     }
   };
+
+
+  export const fetchImageHash = async (url) => {
+  try {
+    const response = await fetch(url);
+    const buffer = await response.arrayBuffer();
+    return SparkMD5.ArrayBuffer.hash(buffer);
+  } catch (err) {
+    console.error("Failed to hash image from IPFS:", err);
+    return null;
+  }
+};
   

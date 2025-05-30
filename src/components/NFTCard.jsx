@@ -37,7 +37,7 @@ NFTCard = ({
             <div>
               <h3 className={`text-xl font-semibold mb-1 ${
                 isDarkMode ? 'text-white' : 'text-gray-800'
-              }`}>{name}</h3>
+              }`}>{name.slice(0,15)}...</h3>
               <p className={`text-sm ${
                 isDarkMode ? 'text-gray-400' : 'text-sky-600'
               }`}>by {seller?.slice(0,5)}...</p>

@@ -130,6 +130,33 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const fetchProfileInfo = createAsyncThunk(
+  "auth/fetchProfileInfo",
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const { token } = getState().auth;
+
+      const response = await fetch(`${apiUrl}/api/user/profile`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!data.success) throw new Error(data.error || "Failed to fetch profile info.");
+
+      return data.user;
+    } catch (error) {
+      dispatch(updateToast({ message: error.message || "Failed to fetch profile info", type: "error" }));
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
 
 export const linkWallet = createAsyncThunk(
   "auth/linkWallet",
@@ -178,9 +205,11 @@ export const updateprofile = createAsyncThunk(
   "auth/updateprofile",
   async (body, { getState, dispatch, rejectWithValue }) => {
     try {
-      const data = await fetchFromAPI(`${apiUrl}/api/auth/updateprofile`, "POST", body);
-      dispatch(updateToast({ message: "userprofile successfully updated", type: "success" })); // ✅ Custom toast dispatch
-      return data.cart;
+      const data = await fetchFromAPI(`${apiUrl}/api/user/updateprofile`, "POST", body);
+      dispatch(updateToast({ message: "userprofile successfully updated", type: "success" }));
+      console.log(data);
+       // ✅ Custom toast dispatch
+      return data.user;
     } catch (error) {
       dispatch(updateToast({ message: error.message, type: "error" })); // ✅ Error toast dispatch
       return rejectWithValue(error.message);
@@ -214,7 +243,12 @@ const authSlice = createSlice({
       state.token = localStorage.getItem('token')
       state.iswallet = action.payload.walletAddress.length > 0
       state.isAuthenticated = !!localStorage.getItem('token')
-    }
+    },
+    setWalletAddress(state, action) {
+      if (state.user) {
+        state.user.walletAddress = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -297,6 +331,20 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(fetchProfileInfo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProfileInfo.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.iswallet = action.payload?.walletAddress?.length > 0;
+        state.loading = false;
+      })
+      .addCase(fetchProfileInfo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
 
   },
 });

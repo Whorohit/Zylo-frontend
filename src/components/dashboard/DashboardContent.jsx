@@ -7,6 +7,8 @@ import { DashboardPurchased } from './DashboardPurchased';
 import { DashboardListed } from './DashboardListed';
 import { TransactionHistory } from './TransactionHistory';
 import { RecentActivity } from './RecentActivity';
+import TransactionHistoryWrapper from './TransactionHistoryWrapper';
+// import TransactionHistoryWrapper from './TransactionHistoryWrapper';
 
 export const DashboardContent = ({ activeTab }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
@@ -21,7 +23,7 @@ export const DashboardContent = ({ activeTab }) => {
       case 'listed':
         return <DashboardListed />;
       case 'history':
-        return <TransactionHistory transactions={transactions} />;
+        return <TransactionHistoryWrapper />;
       case 'activity':
         return <RecentActivity activities={activities} />;
       default:

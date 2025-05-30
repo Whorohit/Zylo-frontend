@@ -1,9 +1,11 @@
 import React from 'react';
 import { useThemeStore } from '../../store/useThemeStore';
+import { useSelector } from 'react-redux';
 
 export const TransactionHistory = ({ transactions }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-
+  const user=useSelector((state)=>state.user)
+ 
   return (
     <div className={`rounded-xl ${
       isDarkMode ? 'bg-gray-800/50' : 'bg-white'
@@ -59,7 +61,7 @@ export const TransactionHistory = ({ transactions }) => {
                 </td>
               </tr>
             ))}
-          </tbody>
+        </tbody>
         </table>
       </div>
     </div>
