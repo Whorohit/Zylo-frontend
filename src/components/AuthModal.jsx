@@ -14,13 +14,13 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   // const [register] = useRegisterMutation();
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const dispatch = useDispatch();
-
+   const [isdisable, setisdisable] = useState(false)
   if (!isOpen) return null;
 
   const handleMetaMaskLogin = async () => {
 
     try {
-      
+        setisdisable(true)
       
       await dispatch(metaMaskLogin()).unwrap();
       onClose();
@@ -28,10 +28,14 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
       console.error('MetaMask login failed:', error);
       
     }
+    finally{
+       setisdisable(false)
+    }
   };
   
 
   const handleSubmit = async (e) => {
+     setisdisable(true)
     e.preventDefault();
     try {
       if (mode === 'login') {
@@ -46,6 +50,9 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     } catch (error) {
       console.error('Authentication failed:', error);
       
+    }
+    finally{
+       setisdisable(false)
     }
   };
 
@@ -73,7 +80,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
 
         {mode === 'login' && (
           <div className="space-y-4 mb-6">
-            <button onClick={handleMetaMaskLogin} className={`w-full flex items-center justify-center space-x-2 py-3 rounded-xl font-medium transition-all duration-200 ${isDarkMode ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
+            <button  disabled={isdisable} onClick={handleMetaMaskLogin} className={`w-full flex items-center justify-center space-x-2 py-3 rounded-xl font-medium transition-all duration-200 ${isDarkMode ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}>
               <img src={metamasklogo} alt="MetaMask" className="w-5 h-5" />
               <span>Continue with MetaMask</span>
             </button>
@@ -92,6 +99,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                 onChange={handleChange}
                 className="w-full pl-12 pr-4 py-3 rounded-xl border-2"
                 required
+                disabled={isdisable}
               />
             </div>
           )}
@@ -106,6 +114,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
               onChange={handleChange}
               className="w-full pl-12 pr-4 py-3 rounded-xl border-2"
               required
+              disabled={isdisable}
             />
           </div>
 
@@ -117,6 +126,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
+              disabled={isdisable}
               className="w-full pl-12 pr-4 py-3 rounded-xl border-2"
               required
             />
@@ -131,7 +141,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         <div className="mt-6 pt-6 text-center">
           <p>
             {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-            <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="text-sky-500">
+            <button   disabled={isdisable} onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="text-sky-500">
               {mode === 'login' ? 'Sign Up' : 'Sign In'}
             </button>
           </p>
